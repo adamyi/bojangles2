@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <ctime>
+#include <chrono>
 
 #include "threads.hpp"
 #include "bitwisehelper.hpp"
@@ -14,8 +15,16 @@
 #include "stringhelper.hpp"
 #include "dna.hpp"
 
+inline int currentTime() {
+    std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds> (
+        std::chrono::system_clock::now().time_since_epoch()
+    );
+    return ms.count();
+}
+
 int main(int argc, const char *argv[]) {
-    srand(time(0));
+    int ms = currentTime();
+    srand(ms);
     printf("Threads: %d\n", num_threads());
     uchar a[10];
     memset(a, 1, sizeof(a));
@@ -39,8 +48,14 @@ int main(int argc, const char *argv[]) {
         std::cout << "add course: " << argv[i] << std::endl;
     }
 
+    std::cout << "Used " << currentTime() - ms << " milliseconds to initialize." << std::endl;
+
+    ms = currentTime();
     CoursePlan cp = CoursePlan(&cm, courseIds);
-    findOptimalSchedule(&cp);
+    Schedule optimal = findOptimalSchedule(&cp);
+    std::cout << "Used " << currentTime() - ms << " milliseconds to calculate." << std::endl;
+    //FIXME: the return value would cause panic... Probably has something to do with delete
+    printSchedule(&optimal);
 
     //TODO: properly delete CourseMap and CoursePlan.
     return 0;
