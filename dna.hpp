@@ -1,5 +1,5 @@
 #ifndef DNA_HPP
-#define DNA_H PP
+#define DNA_HPP
 
 #include "schedule.hpp"
 
