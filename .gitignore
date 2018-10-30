@@ -1,2 +1,4 @@
 classes
 test
+.gdb_history
+*.dSYM

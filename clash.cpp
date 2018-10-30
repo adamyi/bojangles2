@@ -73,7 +73,7 @@ inline long count_bits_asm_chunked(const uchar *buffer, size_t bufsize)
 // Count the bits using inline ASM with POPCNT
 long count_bits_asm(const uchar *buffer, size_t bufsize)
 {
-    const int num_cores = num_threads();
+    const int num_cores = 1; // const int num_cores = num_threads();
     const size_t num_chunks = bufsize / chunk_size;
     const size_t chunks_per_core = num_chunks / num_cores;
     const size_t bufsize_per_core = chunks_per_core * chunk_size;
@@ -82,7 +82,7 @@ long count_bits_asm(const uchar *buffer, size_t bufsize)
 
     long total = 0;
 
-#pragma omp parallel for reduction (+:total)
+// #pragma omp parallel for reduction (+:total)
     for (int core = 0; core < num_cores; core++)
     {
         const uchar *mybuffer = buffer + core * bufsize_per_core;
