@@ -1,4 +1,3 @@
-#include <omp.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -7,13 +6,13 @@
 #include <iostream>
 #include <ctime>
 
-#include "threads.h"
-#include "clash.h"
-#include "parse.h"
-#include "course.h"
-#include "schedule.h"
-#include "stringhelper.h"
-#include "dna.h"
+#include "threads.hpp"
+#include "bitwisehelper.hpp"
+#include "parse.hpp"
+#include "course.hpp"
+#include "schedule.hpp"
+#include "stringhelper.hpp"
+#include "dna.hpp"
 
 int main(int argc, const char *argv[]) {
     srand(time(0));

@@ -1,12 +1,11 @@
-#include <omp.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-#include "threads.h"
-#include "stringhelper.h"
+#include "bitwisehelper.hpp"
+#include "stringhelper.hpp"
 
-// copied from https://github.com/bobbyi/Fast-Bit-Counting
+// reference: https://github.com/bobbyi/Fast-Bit-Counting
 
 // The SEE implementations work in long-sized chunks
 typedef const unsigned long chunk_t;
@@ -73,22 +72,14 @@ inline long count_bits_asm_chunked(const uchar *buffer, size_t bufsize)
 // Count the bits using inline ASM with POPCNT
 long count_bits_asm(const uchar *buffer, size_t bufsize)
 {
-    const int num_cores = 1; // const int num_cores = num_threads();
     const size_t num_chunks = bufsize / chunk_size;
-    const size_t chunks_per_core = num_chunks / num_cores;
-    const size_t bufsize_per_core = chunks_per_core * chunk_size;
-    const size_t chunked_bufsize = num_cores * bufsize_per_core;
+    const size_t chunked_bufsize = num_chunks * chunk_size;
     const size_t leftover = bufsize - chunked_bufsize;
 
     long total = 0;
 
-// #pragma omp parallel for reduction (+:total)
-    for (int core = 0; core < num_cores; core++)
-    {
-        const uchar *mybuffer = buffer + core * bufsize_per_core;
-        const long num_bits = count_bits_asm_chunked(mybuffer, bufsize_per_core);
-        total += num_bits;
-    }
+    const long num_bits = count_bits_asm_chunked(buffer, chunked_bufsize);
+    total += num_bits;
 
     total += count_bits_naive(buffer + chunked_bufsize, leftover);
 

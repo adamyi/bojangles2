@@ -1,5 +1,5 @@
-#include "schedule.h"
-#include "course.h"
+#include "schedule.hpp"
+#include "course.hpp"
 #include <vector>
 #include <string>
 #include <cstdio>

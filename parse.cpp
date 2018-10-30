@@ -1,5 +1,5 @@
-#include "course.h"
-#include "stringhelper.h"
+#include "course.hpp"
+#include "stringhelper.hpp"
 #include <iostream>
 #include <vector>
 #include <string>

@@ -1,11 +1,11 @@
-#ifndef SCHEDULE_H 
-#define SCHEDULE_H
+#ifndef SCHEDULE_HPP
+#define SCHEDULE_HPP
 
 #include <vector>
 #include <map>
 #include <string>
-#include "stringhelper.h"
-#include "course.h"
+#include "stringhelper.hpp"
+#include "course.hpp"
 
 class CoursePlan {
     public:

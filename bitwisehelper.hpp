@@ -1,5 +1,5 @@
-#ifndef CLASH_H
-#define CLASH_H 
+#ifndef BITWISEHELPER_HPP
+#define BITWISEHELPER_HPP
 
 typedef unsigned char uchar;
 

@@ -1,7 +1,7 @@
-#ifndef PARSE_H
-#define PARSE_H
+#ifndef PARSE_HPP
+#define PARSE_HPP
 
-#include "course.h"
+#include "course.hpp"
 #include <vector>
 
 CourseMap  getClassesFromAdminData(const char *data_path);
