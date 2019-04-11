@@ -1,8 +1,8 @@
-#ifndef STRING_HELPER_HPP
-#define STRING_HELPER_HPP
+#ifndef STRING_HELPER_H
+#define STRING_HELPER_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 typedef unsigned char uchar;
 

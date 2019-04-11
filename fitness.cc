@@ -1,14 +1,14 @@
-#include "course.hpp"
-#include "schedule.hpp"
-#include "threads.hpp"
-#include "bitwisehelper.hpp"
-#include "fitness.hpp"
+#include "fitness.h"
+#include "bitwisehelper.h"
+#include "course.h"
+#include "schedule.h"
+#include "threads.h"
+#include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cmath>
 #include <iostream>
-#include <algorithm>
 
 /*
 # Fitness Function
@@ -63,7 +63,7 @@ def get_fitness_vals(comps, dna, freetimepref):
       hours[time['day']] += end - start
       ints.append([start, end])
 
-  for 
+  for
 
   print("CALC TIME: %f" %(timer.time() - st))
 
@@ -73,7 +73,8 @@ def get_fitness_vals(comps, dna, freetimepref):
   else:
     avg = sum(hours.values())
     avg /= numpy.count_nonzero(hours.values())
-    variance = sum([(hours[day] - avg) ** 2 if hours[day] > 0 else 0 for day in DAYS]) / (numpy.count_nonzero(hours.values()) - 1)
+    variance = sum([(hours[day] - avg) ** 2 if hours[day] > 0 else 0 for day in
+DAYS]) / (numpy.count_nonzero(hours.values()) - 1)
 
   return course_clash, days, totalHours, ftp_clash, variance
 
@@ -99,53 +100,55 @@ def fitness(comps, dna):
   ftp = {day: [] for day in DAYS}
 
   course_clash, day, hr, ftp_clash, var = get_fitness_vals(comps, dna, ftp)
-  return clash_value(course_clash) + day_value(day) + hr_value(hr) * 0.0 + clash_value(ftp_clash) + diff_value(var)
+  return clash_value(course_clash) + day_value(day) + hr_value(hr) * 0.0 +
+clash_value(ftp_clash) + diff_value(var)
  * */
 
 inline int clash_duration(Schedule *schedule) {
-    int cdur = 0;
-    uchar time[80];
-    uchar tmp_time[80];
-    std::fill_n(time, 80, 0);
-    for (auto _class: *schedule) {
-        memcpy(tmp_time, _class->time, 80);
-        for (int i = 0; i < 80; i++) {
-            tmp_time[i] &= time[i];
-            time[i] |= _class->time[i];
-        }
-
-        cdur += count_bits_asm(tmp_time, 80);
+  int cdur = 0;
+  uchar time[80];
+  uchar tmp_time[80];
+  std::fill_n(time, 80, 0);
+  for (auto _class : *schedule) {
+    memcpy(tmp_time, _class->time, 80);
+    for (int i = 0; i < 80; i++) {
+      tmp_time[i] &= time[i];
+      time[i] |= _class->time[i];
     }
-    return std::max(-13.7 * exp(-0.01 * cdur) + 113.6 * exp(-0.02 * cdur), 0.0);
+
+    cdur += count_bits_asm(tmp_time, 80);
+  }
+  return std::max(-13.7 * exp(-0.01 * cdur) + 113.6 * exp(-0.02 * cdur), 0.0);
 }
 
 inline int total_duration(Schedule *schedule) {
-    int tdur = 0;
-    for (auto _class: *schedule) {
-        tdur += count_bits_asm(_class->time, 80);
-    }
-    return tdur; //TODO: upper lower boundary weight
+  int tdur = 0;
+  for (auto _class : *schedule) {
+    tdur += count_bits_asm(_class->time, 80);
+  }
+  return tdur; // TODO(adamyi): upper lower boundary weight
 }
 
 inline int total_days(Schedule *schedule) {
-    int ret[7] = {100, 100, 100, 100, 50, 0, 0};
-    int tdays = 0;
-    uchar time[80];
-    std::fill_n(time, 80, 0);
-    for (auto _class: *schedule) {
-        for (int i = 0; i < 80; i++) {
-            time[i] |= _class->time[i];
-        }
+  int ret[7] = {100, 100, 100, 100, 50, 0, 0};
+  int tdays = 0;
+  uchar time[80];
+  std::fill_n(time, 80, 0);
+  for (auto _class : *schedule) {
+    for (int i = 0; i < 80; i++) {
+      time[i] |= _class->time[i];
     }
-    //TODO: check how many days.
-    return ret[tdays];
+  }
+  // TODO(adamyi): check how many days.
+  return ret[tdays];
 }
 
 inline int day_diff_duration(Schedule *schedule) {
-    //TODO
-    return 0;
+  // TODO(adamyi)
+  return 0;
 }
 
 int fitness(Schedule *schedule) {
-    return clash_duration(schedule) + total_duration(schedule) + total_days(schedule) + day_diff_duration(schedule);
+  return clash_duration(schedule) + total_duration(schedule) +
+         total_days(schedule) + day_diff_duration(schedule);
 }

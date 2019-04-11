@@ -1,5 +1,7 @@
-#ifndef BITWISEHELPER_HPP
-#define BITWISEHELPER_HPP
+#ifndef BITWISEHELPER_H
+#define BITWISEHELPER_H
+
+#include <cstdlib>
 
 typedef unsigned char uchar;
 

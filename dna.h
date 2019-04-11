@@ -1,7 +1,7 @@
 #ifndef DNA_HPP
 #define DNA_HPP
 
-#include "schedule.hpp"
+#include "schedule.h"
 
 Schedule findOptimalSchedule(CoursePlan *cp);
 
