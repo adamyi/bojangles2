@@ -22,6 +22,7 @@ private:
 public:
   uchar time[80];
   /* ignore RSV and CLN now... Since they're pretty useless */
+  std::string code;      /* e.g. COMP1511 */
   std::string component; /* e.g. LEC, TUT */
   std::string section;   /* e.g. F09A */
   std::string instrMode; /* instruction mode, e.g. in person */

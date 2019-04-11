@@ -25,8 +25,14 @@ CoursePlan::CoursePlan(CourseMap *cm, std::vector<std::string> courseCodes) {
 
 void printSchedule(Schedule *s) {
   std::cout << "Schedule{";
+  bool prefix = false;
   for (auto &curr : *s) {
-    std::cout << curr->section << ", ";
+    if (prefix)
+      std::cout << ", ";
+    else
+      prefix = true;
+    std::cout << curr->code << "_";
+    std::cout << curr->section;
   }
   std::cout << "}" << std::endl;
 }

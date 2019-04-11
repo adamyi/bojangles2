@@ -54,6 +54,7 @@ Class::Class(std::vector<std::string> dataRow) {
    * ,UGRD,COMPSC,LAB,9517,H12A,Non,1,GRD,A,No,P,KENS,KENSINGTON, ,
    * ,2018-07-23,2018-10-28,11,20,20,1467/COMP6447-PGRD/19,1,0,0,65170,1
    */
+  code = dataRow[3] + dataRow[4];
   component = std::string(dataRow[9]);
   section = dataRow[11];
   instrMode = dataRow[17];
