@@ -1,6 +1,8 @@
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
+#include <map>
+#include <vector>
 
 
 // take from http://stackoverflow.com/a/236803/248823

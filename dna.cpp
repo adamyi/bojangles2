@@ -34,7 +34,7 @@ int calcPopulationWeight(Schedule *population, int *weights, Schedule **optimalS
         int fit = fitness(population + i);
         weights[i] = fit;
         sum += fit;
-        if (fit > *optimalWeight) {
+        if (fit >= *optimalWeight) {
             *optimalWeight = fit;
             *optimalSchedule = population + i;
         }
@@ -100,6 +100,8 @@ Schedule findOptimalSchedule(CoursePlan *cp) {
     for (int i = 0; i < GENERATIONS; i++) {
         int totalFit = calcPopulationWeight(population, weights, &optimalSchedule, &optimalWeight);
         std::cout << "Generation #" << i << " " << totalFit << " " << optimalWeight << std::endl;
+        // printf("%p\n", optimalSchedule);
+        printSchedule(optimalSchedule);
         Schedule *newPopulation = new Schedule[POP_SIZE];
         #pragma omp parallel for
         for (int j = 0; j < POP_SIZE; j += 2) {
@@ -129,6 +131,8 @@ Schedule findOptimalSchedule(CoursePlan *cp) {
         delete[] population;
         population = newPopulation;
     }
+
+    calcPopulationWeight(population, weights, &optimalSchedule, &optimalWeight);
 
     Schedule ret = *optimalSchedule;
 

@@ -34,12 +34,12 @@ int main(int argc, const char *argv[]) {
     CourseMap cm = getClassesFromAdminData("classes");
 
     /*printf("%p\n", cm.at(std::string("COMP1511")));
-    printf("%d\n", cm.at(std::string("COMP1511")).classes.size());
-    printf("%p\n", cm.at(std::string("COMP1511")).classes.at(std::string("LEC")));
-    printf("%d\n", cm[std::string("COMP1511")].classes[std::string("LEC")].size());
-    printf("%p\n", cm[std::string("COMP1511")].classes[std::string("LEC")].back());
+    printf("%d\n", cm.at(std::string("COMP1511"))->classes.size());
+    printf("%p\n", cm.at(std::string("COMP1511"))->classes.at(std::string("LEC")));
+    printf("%d\n", cm[std::string("COMP1511")]->classes[std::string("LEC")].size());
+    printf("%p\n", cm[std::string("COMP1511")]->classes[std::string("LEC")].back());
 
-    std::cout << cm[std::string("COMP1511")].classes[std::string("LEC")][0]->enrlTot;*/
+    std::cout << cm[std::string("COMP1511")]->classes[std::string("LEC")][0]->enrlTot;*/
 
     std::vector<std::string> courseIds;
 
