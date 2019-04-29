@@ -9,12 +9,22 @@ CoursePlan::CoursePlan(CourseMap *cm, std::vector<std::string> courseCodes) {
   this->courseCodes = courseCodes;
   for (auto &ccode : courseCodes) {
     // TODO(adamyi): consider PGRD
-    std::cout << cm->at(ccode)->career << std::endl;
-    if (cm->at(ccode)->career == std::string("PGRD"))
+    CourseMap::iterator i = cm->find(ccode);
+    if (i == cm->end()) {
+      std::cout << "ERROR: " << ccode << " does not exist" << std::endl;
       continue;
-    for (auto &class_pair : cm->at(ccode)->classes) {
+    }
+    Course *course = i->second;
+    std::cout << course->career << std::endl;
+    if (course->career == std::string("PGRD"))
+      continue;
+    for (auto &class_pair : course->classes) {
       std::cout << class_pair.first << " " << class_pair.second.size()
                 << std::endl;
+      for (auto &clss : class_pair.second) {
+        std::cout << clss->code << "_" << clss->section << "; ";
+      }
+      std::cout << std::endl;
       // TODO(adamyi): remove ones without any time.
 
       components.push_back(&class_pair.second);

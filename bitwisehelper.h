@@ -11,4 +11,6 @@ inline long count_bits_asm_chunked(const uchar *buffer, size_t bufsize);
 
 long count_bits_asm(const uchar *buffer, size_t bufsize);
 
+bool timeInDay(const uchar *time, int day);
+
 #endif

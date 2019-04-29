@@ -96,6 +96,7 @@ void mutate(CoursePlan *cp, Schedule *schedule) {
 Schedule findOptimalSchedule(CoursePlan *cp) {
   // generate initial random population
   Schedule *population = randomPopulation(cp);
+  Schedule ret;
   int *weights = new int[POP_SIZE];
 
   Schedule *optimalSchedule = NULL;
@@ -109,6 +110,8 @@ Schedule findOptimalSchedule(CoursePlan *cp) {
               << std::endl;
     // printf("%p\n", optimalSchedule);
     printSchedule(optimalSchedule);
+    ret = *optimalSchedule;
+    optimalSchedule = &ret;
     Schedule *newPopulation = new Schedule[POP_SIZE];
 #pragma omp parallel for
     for (int j = 0; j < POP_SIZE; j += 2) {
@@ -140,8 +143,7 @@ Schedule findOptimalSchedule(CoursePlan *cp) {
   }
 
   calcPopulationWeight(population, weights, &optimalSchedule, &optimalWeight);
-
-  Schedule ret = *optimalSchedule;
+  ret = *optimalSchedule;
 
   delete[] population;
 

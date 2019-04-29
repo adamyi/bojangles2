@@ -139,7 +139,10 @@ inline int total_days(Schedule *schedule) {
       time[i] |= _class->time[i];
     }
   }
-  // TODO(adamyi): check how many days.
+  for (int i = 0; i < 7; i++)
+    if (timeInDay(time, i) > 0)
+      tdays++;
+  // printf("tdays %d\n", tdays);
   return ret[tdays];
 }
 

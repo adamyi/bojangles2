@@ -77,3 +77,29 @@ long count_bits_asm(const uchar *buffer, size_t bufsize) {
 
   return total;
 }
+
+uchar week_mask[7][80];
+bool week_mask_initiated = false;
+
+bool timeInDay(const uchar *time, int day) {
+  if (!week_mask_initiated) {
+    uchar cbit = 1;
+    int ind = 0;
+    for (int i = 0; i < 7; i++) {
+      for (int j = 0; j < (22 - 7) * 6; j++) {
+        week_mask[i][ind] |= cbit;
+        cbit <<= 1;
+        if (cbit == 0) {
+          cbit = 1;
+          ind++;
+        }
+      }
+    }
+    week_mask_initiated = true;
+  }
+  for (int i = 0; i < 80; i++) {
+    if (week_mask[day][i] & time[i])
+      return true;
+  }
+  return false;
+}
