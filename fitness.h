@@ -3,6 +3,6 @@
 
 #include "schedule.h"
 
-int fitness(Schedule *schedule);
+int fitness(Schedule *schedule, int maxt, int mint, bool debug);
 
 #endif

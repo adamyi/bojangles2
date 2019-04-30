@@ -81,7 +81,7 @@ long count_bits_asm(const uchar *buffer, size_t bufsize) {
 uchar week_mask[7][80];
 bool week_mask_initiated = false;
 
-bool timeInDay(const uchar *time, int day) {
+inline void init_week_mask() {
   if (!week_mask_initiated) {
     uchar cbit = 1;
     int ind = 0;
@@ -97,9 +97,23 @@ bool timeInDay(const uchar *time, int day) {
     }
     week_mask_initiated = true;
   }
+}
+
+bool timeHasDay(const uchar *time, int day) {
+  init_week_mask();
   for (int i = 0; i < 80; i++) {
     if (week_mask[day][i] & time[i])
       return true;
   }
   return false;
+}
+
+int timeInDay(const uchar *time, int day) {
+  init_week_mask();
+  uchar t[80];
+  std::fill_n(t, 80, 0);
+  for (int i = 0; i < 80; i++) {
+    t[i] = week_mask[day][i] & time[i];
+  }
+  return (int)count_bits_asm(t, 80);
 }

@@ -10,6 +10,11 @@
 #include <cstring>
 #include <iostream>
 
+const float CLASH_DURATION_DEFAULT_COEFFICIENT = 8;
+const float TOTAL_DURATION_DEFAULT_COEFFICIENT = 0.25;
+const float TOTAL_DAYS_DEFAULT_COEFFICIENT = 0.25;
+const float DAY_DIFF_DURATION_DEFAULT_COEFFICIENT = 0.2;
+const float NO_WEB_LECTURE_DEFAULT_COEFFICIENT = 0.8;
 /*
 # Fitness Function
 
@@ -118,19 +123,20 @@ inline int clash_duration(Schedule *schedule) {
 
     cdur += count_bits_asm(tmp_time, 80);
   }
-  return std::max(-13.7 * exp(-0.01 * cdur) + 113.6 * exp(-0.02 * cdur), 0.0);
+  return std::max(-13.7 * exp(-0.1 * cdur) + 113.6 * exp(-0.05 * cdur), 0.0);
 }
 
-inline int total_duration(Schedule *schedule) {
+inline int total_duration(Schedule *schedule, int maxt, int mint) {
+  // hr_value = lambda x: (HOUR_UPPER-x)*1.0/(HOUR_UPPER - HOUR_LOWER) * 100
   int tdur = 0;
   for (auto _class : *schedule) {
     tdur += count_bits_asm(_class->time, 80);
   }
-  return tdur; // TODO(adamyi): upper lower boundary weight
+  return (maxt - tdur) * 1.0 / (maxt - mint) * 100;
 }
 
 inline int total_days(Schedule *schedule) {
-  int ret[7] = {100, 100, 100, 100, 50, 0, 0};
+  int ret[7] = {100, 95, 90, 85, 50, 0, 0};
   int tdays = 0;
   uchar time[80];
   std::fill_n(time, 80, 0);
@@ -140,18 +146,61 @@ inline int total_days(Schedule *schedule) {
     }
   }
   for (int i = 0; i < 7; i++)
-    if (timeInDay(time, i) > 0)
+    if (timeHasDay(time, i) > 0)
       tdays++;
   // printf("tdays %d\n", tdays);
   return ret[tdays];
 }
 
 inline int day_diff_duration(Schedule *schedule) {
-  // TODO(adamyi)
-  return 0;
+  int sum = 0, count = 0;
+  uchar time[80];
+  std::fill_n(time, 80, 0);
+  for (auto _class : *schedule) {
+    for (int i = 0; i < 80; i++) {
+      time[i] |= _class->time[i];
+    }
+  }
+  int timePerDay[7];
+  for (int i = 0; i < 7; i++) {
+    timePerDay[i] = timeInDay(time, i) / 6; // formula was designed for hours
+    if (timePerDay[i] > 0) {
+      sum += timePerDay[i];
+      count++;
+    }
+  }
+  double var = 0;
+  if (count >= 1) {
+    double avg = 1.0 * sum / count;
+    for (int i = 0; i < 7; i++) {
+      if (timePerDay[i] != 0) {
+        var += (timePerDay[i] - avg) * (timePerDay[i] - avg);
+      }
+    }
+    var /= count;
+  }
+  return 0.25 * var * var - 10.25 * var + 100;
 }
 
-int fitness(Schedule *schedule) {
-  return clash_duration(schedule) + total_duration(schedule) +
-         total_days(schedule) + day_diff_duration(schedule);
+inline int no_web_lecture(Schedule *schedule) {
+  int count = 0;
+  for (auto _class : *schedule) {
+    if (_class->section.find("WEB") != std::string::npos) {
+      count++;
+    }
+  }
+  return -200 * count;
+}
+
+int fitness(Schedule *schedule, int maxt, int mint, bool debug) {
+  if (debug)
+    printf("%d %d %d %d %d\n", clash_duration(schedule),
+           total_duration(schedule, maxt, mint), total_days(schedule),
+           day_diff_duration(schedule), no_web_lecture(schedule));
+  return CLASH_DURATION_DEFAULT_COEFFICIENT * clash_duration(schedule) +
+         TOTAL_DURATION_DEFAULT_COEFFICIENT *
+             total_duration(schedule, maxt, mint) +
+         TOTAL_DAYS_DEFAULT_COEFFICIENT * total_days(schedule) +
+         DAY_DIFF_DURATION_DEFAULT_COEFFICIENT * day_diff_duration(schedule) +
+         NO_WEB_LECTURE_DEFAULT_COEFFICIENT * no_web_lecture(schedule);
 }

@@ -10,7 +10,8 @@
 
 const int POP_SIZE = 1000;
 const int GENERATIONS = 200;
-const int MUTATION_CHANCE = 150;
+// const int MUTATION_CHANCE = 150;
+const int MUTATION_CHANCE = 80;
 
 typedef std::vector<Class *> Schedule;
 
@@ -27,11 +28,14 @@ Schedule *randomPopulation(CoursePlan *cp) {
 // calculate fitness of entire population
 // return sum of fitness
 int calcPopulationWeight(Schedule *population, int *weights,
-                         Schedule **optimalSchedule, int *optimalWeight) {
+                         Schedule **optimalSchedule, int *optimalWeight,
+                         int maxt, int mint) {
   int sum = 1; // so that we don't divide by zero
-#pragma omp parallel for reduction(+ : sum)
+               // #pragma omp parallel for reduction(+ : sum)
   for (int i = 0; i < POP_SIZE; i++) {
-    int fit = fitness(population + i);
+    // printSchedule(population + i);
+    int fit = fitness(population + i, maxt, mint, false);
+    // printf("fit: %d\n", fit);
     weights[i] = fit;
     sum += fit;
     if (fit >= *optimalWeight) {
@@ -104,12 +108,14 @@ Schedule findOptimalSchedule(CoursePlan *cp) {
 
   // evolve
   for (int i = 0; i < GENERATIONS; i++) {
-    int totalFit = calcPopulationWeight(population, weights, &optimalSchedule,
-                                        &optimalWeight);
+    int totalFit =
+        calcPopulationWeight(population, weights, &optimalSchedule,
+                             &optimalWeight, cp->max_time, cp->min_time);
     std::cout << "Generation #" << i << " " << totalFit << " " << optimalWeight
               << std::endl;
     // printf("%p\n", optimalSchedule);
     printSchedule(optimalSchedule);
+    fitness(optimalSchedule, cp->max_time, cp->min_time, true);
     ret = *optimalSchedule;
     optimalSchedule = &ret;
     Schedule *newPopulation = new Schedule[POP_SIZE];
@@ -142,7 +148,8 @@ Schedule findOptimalSchedule(CoursePlan *cp) {
     population = newPopulation;
   }
 
-  calcPopulationWeight(population, weights, &optimalSchedule, &optimalWeight);
+  calcPopulationWeight(population, weights, &optimalSchedule, &optimalWeight,
+                       cp->max_time, cp->min_time);
   ret = *optimalSchedule;
 
   delete[] population;

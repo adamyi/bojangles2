@@ -1,4 +1,5 @@
 #include "schedule.h"
+#include "bitwisehelper.h"
 #include "course.h"
 #include <cstdio>
 #include <iostream>
@@ -7,6 +8,7 @@
 
 CoursePlan::CoursePlan(CourseMap *cm, std::vector<std::string> courseCodes) {
   this->courseCodes = courseCodes;
+  this->min_time = this->max_time = 0;
   for (auto &ccode : courseCodes) {
     // TODO(adamyi): consider PGRD
     CourseMap::iterator i = cm->find(ccode);
@@ -21,14 +23,22 @@ CoursePlan::CoursePlan(CourseMap *cm, std::vector<std::string> courseCodes) {
     for (auto &class_pair : course->classes) {
       std::cout << class_pair.first << " " << class_pair.second.size()
                 << std::endl;
+      int mint = -1, maxt = 0;
       for (auto &clss : class_pair.second) {
         std::cout << clss->code << "_" << clss->section << "; ";
+        int t = count_bits_asm(clss->time, 80);
+        if (t < mint || mint == -1)
+          mint = t;
+        if (t > maxt)
+          maxt = t;
       }
+      this->min_time += mint;
+      this->max_time += maxt;
       std::cout << std::endl;
       // TODO(adamyi): remove ones without any time.
 
-      components.push_back(&class_pair.second);
-      std::cout << components.size() << std::endl;
+      this->components.push_back(&class_pair.second);
+      std::cout << this->components.size() << std::endl;
     }
   }
 }
